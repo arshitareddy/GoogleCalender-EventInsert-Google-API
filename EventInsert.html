@@ -1,0 +1,241 @@
+<html>
+<head>
+	<title>Medicines List</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	
+
+	<link rel="stylesheet" type="text/css" href="assets/css/medicines_add.css">
+<!-- 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css"> -->
+	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css?v=1234">
+<!-- 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css?v=1234"> -->
+<!-- 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?v=1234" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+	<script type="text/javascript" src="assets/js/lib/jquery-2.1.4.min.js"></script>
+</head>
+  <body>
+    <div id='content'>
+      <h1>Events</h1>
+      <ul id='events'></ul>
+    </div>
+   <button id="authorize-button" style="visibility: hidden" class="btn btn-primary">Authorize</button>
+    
+    <script>
+		var clientId = '656830120756-3*******94fcrm2kk1grkho78mkeboor.apps.googleusercontent.com';
+		var apiKey = 'AIzaSyAC*******X9KeC-57MKjCfQ_K1-EhBY';
+		var scopes = 'https://www.googleapis.com/auth/calendar';
+    	 //var min3 = min2 + 10;
+		 var today1;
+		 var enddate;	
+		 var recurringon;
+		 var display;
+		 var SelBranchVal = "";
+		var now = new Date();
+			today = now.toISOString();
+			//var today2 = (new Date()).toString("yyyy-MM-dd");
+			var dateString = timeSolver.getString(now, "YYYY-MM-DD");
+			var twoHoursLater = new Date(now.getTime() + (2*1000*60*60));
+			twoHoursLater = twoHoursLater.toISOString();
+		
+		
+		function handleClientLoad() {
+			
+			gapi.client.setApiKey(apiKey);
+			window.setTimeout(checkAuth,1);
+		}
+
+		function checkAuth() {
+			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true},handleAuthResult);
+		}
+
+		function handleAuthResult(authResult) {
+			//document.getElementById('time-check').innerHTML = dateString;
+			var authorizeButton = document.getElementById('authorize-button');
+			var resultPanel		= document.getElementById('result-panel');
+			var resultTitle		= document.getElementById('result-title');
+			if(recurringon == 'none'){
+			var resource = {
+				"summary": "Its Time to take your Meds "+display,
+				"start": {
+					'dateTime': today1,
+					'timeZone': 'America/New_York'
+				},
+				"end": {
+					'dateTime': enddate,
+					'timeZone': 'America/New_York'
+				}
+				
+			};
+			}else{
+				var resource = {
+					"summary": "Its Time to take your Meds "+display,
+					"start": {
+						'dateTime': today1,
+						'timeZone': 'America/New_York'
+					},
+					"end": {
+						'dateTime': enddate,
+						'timeZone': 'America/New_York'
+					},
+					"recurrence": [
+						'RRULE:FREQ='+recurringon,
+				],
+				'reminders': {
+						'useDefault': false,
+						'overrides': [
+								{'method': 'popup', 'minutes': 1}
+									]
+							}
+				
+			};
+			}
+			
+			if (authResult && !authResult.error) {						
+					authorizeButton.style.visibility = 'hidden';			// if authorized, hide button
+					resultPanel.className = resultPanel.className.replace( /(?:^|\s)panel-danger(?!\S)/g , '' )	// remove red class
+					resultPanel.className += 'panel-success';				// add green class
+					//resultTitle.innerHTML = 'Application Authorized'		// display 'authorized' text
+					makeApiCall(resource);											// call the api if authorization passed
+				} else {													// otherwise, show button
+					authorizeButton.style.visibility = 'visible';
+					resultPanel.className += 'panel-danger';				// make panel red
+					authorizeButton.onclick = handleAuthClick;				// setup function to handle button click
+				}
+		}
+
+		function handleAuthClick(event) {
+			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false},handleAuthResult);
+			return false;
+		}
+		
+		
+		function makeApiCall(resource) {
+			gapi.client.load('calendar', 'v3', function() {
+			var request = gapi.client.calendar.events.insert({'calendarId': 'primary', "resource": resource});
+          	request.execute(function(resp) {
+				if(resp.status=='confirmed') {
+					document.getElementById('event-response').innerHTML = "Event created. View it <a href='" + resp.htmlLink + "'>Google Calender</a>.";
+				} 
+				else {
+					document.getElementById('event-response').innerHTML = "There was a problem. Reload page and try again.";
+				}
+			});
+		});
+	}
+	
+	var set=0;  
+ver=parseInt(navigator.appVersion);
+	
+function setv()
+{
+var min = 0;
+recurringon = document.querySelector('input[name = "recurringon"]:checked').value;
+var mydate = document.getElementById("myDate").value;
+var checkboxes = document.getElementsByName("medicinename");
+display = "";
+    			for( var i=0; i<checkboxes.length; i++){
+    	    		if( checkboxes[i].checked ){
+        	    		display += " " + checkboxes[i].value + ",";
+        			}
+	    		}
+var hr2 = document.getElementById('hour2').value;
+var min2 = document.getElementById('min2').value;
+var hr3;
+var min3;
+if(hr2<10)
+hr2='0'+hr2;
+if(min2<10)min2='0'+min2;
+if(min2 >= 50)
+{
+  if(parseInt(hr2) == 23)
+  {
+	hr3 = 00; min3 = 10;
+  }else{
+  hr3 = parseInt(hr2) + 1;
+  min3 = 10;
+  }
+}
+hr3 = hr2;
+min3 = parseInt(min2)+ 10;
+today1 = mydate+'T'+hr2+':'+min2+':00';
+enddate =mydate+'T'+hr3+':'+min3+':00';
+handleClientLoad();
+
+}
+
+
+
+function prtsel(x)
+{
+for(var i=0;i<x;i++)document.write("<option value="+i+">"+i+"</option>");
+}
+    </script>
+<!--	<script src="https://code.jquery.com/jquery-1.12.4.js"></script> 
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+  <script src="https://apis.google.com/js/client.js"></script> 
+	<div class="form-group">
+			<h2>Select time for reminder: </h2>
+			<select id=hour2 name=hour2 >
+			<script type='text/javascript'>prtsel(25);</script>
+			</select>
+			<select id=min2 name=min2 >
+			<script type='text/javascript'>prtsel(61);</script>
+			</select>
+			<br>
+		<div>
+			<input type="date" id="myDate" value="2017-05-01">
+		
+		</div>
+	
+		<div id= "radiobutton">
+		<input type="radio" name = "recurringon" id="recurringon" value="none" checked>Never
+		<input type="radio" name = "recurringon" id="recurringon" value="DAILY">Daily
+		<input type="radio" name = "recurringon" id="recurringon" value="WEEKLY">Weekly
+		<input type="radio" name = "recurringon" id="recurringon" value="MONTHLY">Monthly
+		
+	</div>
+		    <input type="button" value="SETReminder" onclick="setv()"/>
+	</div>
+						<div class="multiselect">
+			<div class="selectBox" onclick="showCheckboxes()">
+		                <select>
+		                  <option>Select a medicine</option>
+		                </select>
+		                <div class="overSelect"></div>
+		    </div>
+	<!--    <h1>Medicine<i class="fa fa-chevron-down" aria-hidden="true"></i></h1> -->
+			
+			<input type="text" id ="text" placeholder="Add New Medicine">
+			
+			<div id="checkboxes">
+				<nav>
+					<ul>
+					<li>
+						<label for = "one">
+						<input type="checkbox" name = "medicinename" id="one" value ="Medicine 1" />Medicine 1</label>
+					</li>
+					<li>
+						<label for = "two">
+						<input type="checkbox" name = "medicinename" id="two" value ="Medicine 2"/>Medicine 2</label>
+					</li>
+					<li>
+						<label for = "three">
+						<input type="checkbox" name = "medicinename" id="three" value ="Medicine 3"/>Medicine 3</label>
+					</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+
+</div>
+	<!-- <div class="form-group" id=msg> -->
+	
+	<div class="panel panel-danger" id="result-panel">
+			<div class="panel-heading">
+				<h3 class="panel-title" id="result-title"></h3>
+			</div><!-- .panel-heading -->
+			<div id="event-response"></div>
+			</div><!-- .panel-body -->
+		</div><!-- .panel -->
+	<!-- <div id="event-response"></div> -->
+	<script type="text/javascript" src="assets/js/medicines_add.js"></script>
+  </body>
+</html>

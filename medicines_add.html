@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Medicines List</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="assets/css/medicines_add.css">
+<!-- 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css"> -->
+	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css?v=1234">
+<!-- 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css?v=1234"> -->
+<!-- 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?v=1234" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+	<script type="text/javascript" src="assets/js/lib/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+<div id="container">
+	<div>
+		<input type="date" id="myDate" value="2014-02-09">
+		
+	</div>
+</div>
+<div id="container">
+	<div id= "radiobutton">
+		<input type="radio" name = "recurringon" id="recurringon" value="Daily">Daily
+		<input type="radio" name = "recurringon" id="recurringon" value="Weekly">Weekly
+		<input type="radio" name = "recurringon" id="recurringon" value="Monthly">Monthly
+	</div>
+</div>
+<div id="container">
+
+
+        <div class="multiselect">
+			<div class="selectBox" onclick="showCheckboxes()">
+		                <select>
+		                  <option>Select a medicine</option>
+		                </select>
+		                <div class="overSelect"></div>
+		    </div>
+	<!--    <h1>Medicine<i class="fa fa-chevron-down" aria-hidden="true"></i></h1> -->
+			
+			<input type="text" id ="text" placeholder="Add New Medicine">
+			
+			<div id="checkboxes">
+				<nav>
+					<ul>
+					<li>
+						<label for = "one">
+						<input type="checkbox" name = "medicinename" id="one" value ="Medicine 1" />Medicine 1</label>
+					</li>
+					<li>
+						<label for = "two">
+						<input type="checkbox" name = "medicinename" id="two" value ="Medicine 2"/>Medicine 2</label>
+					</li>
+					<li>
+						<label for = "three">
+						<input type="checkbox" name = "medicinename" id="three" value ="Medicine 3"/>Medicine 3</label>
+					</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+
+</div>
+<div id="container">
+	<button onclick="myFunction()">Try it</button>
+</div>	
+<p id="demo"></p>
+<p id="demo1"></p>
+<p id="demo2"></p>
+<script type="text/javascript" src="assets/js/medicines_add.js"></script>
+
+<script>
+function myFunction() {
+    var x = document.getElementById("myDate").value;
+   //  var y = document.getElementById("recurringon");
+	var recurringon = document.querySelector('input[name = "recurringon"]:checked').value;
+
+
+     var display = "";
+    			checkboxes = document.getElementsByName("medicinename");
+    			for( var i=0; i<checkboxes.length; i++){
+    	    		if( checkboxes[i].checked ){
+        	    		display += " " + checkboxes[i].value + ",";
+        			}
+	    		}
+	    		
+    document.getElementById("demo").innerHTML = x;
+    document.getElementById("demo1").innerHTML = recurringon;
+    document.getElementById("demo2").innerHTML = display;
+}
+</script>
+</body>
+</html>
